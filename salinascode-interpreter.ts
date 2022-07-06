@@ -26,41 +26,41 @@ function tokenizer(line: string) {
 
         const token = line[current];
 
-        if (token == ' ') {
+        if (token === ' ') {
             current++;
             continue;
         }
-        if (token == '(') {
+        if (token === '(') {
             tokens.push({type: "paren", value: "("});
             current++;
             continue;
         }
-        if (token == ')') {
+        if (token === ')') {
             tokens.push({type: "paren", value: ")"});
             current++;
             continue;
         }
-        if (token == '+') {
+        if (token === '+') {
             tokens.push({type: "operator", value: "+"});
             current++;
             continue;
         }
-        if (token == '-') {
+        if (token === '-') {
             tokens.push({type: "operator", value: "-"});
             current++;
             continue;
         }
-        if (token == ',') {
+        if (token === ',') {
             tokens.push({type: "comma", value: ","});
             current++;
             continue;
         }
-        if (token == '←') {
+        if (token === '←') {
             tokens.push({type: "assignation", value: "←"});
             current++;
             continue;
         }
-        if (token == '"' || token == '“' || token == '”') {
+        if (token === '"' || token === '“' || token === '”') {
             let str = "";
             while (line[++current] != '"' && line[current] != '”' && line[current] != '“') {
                 str += line[current];
@@ -108,14 +108,14 @@ function parser(tokens: Array<token>) {
     function walk() : ast_object {
         let token = tokens[current];
 
-        if (token.type == "number") {
+        if (token.type === "number") {
             current++;
             return {
                 type: "NumberLiteral",
                 value: Number(token.value)
             };
         }
-        if (token.type == "string") {
+        if (token.type === "string") {
             current++;
             return {
                 type: "StringLiteral",
@@ -123,7 +123,7 @@ function parser(tokens: Array<token>) {
             };
         }
         // Check for variable or fuction call
-        if (token.type == "identifier") {
+        if (token.type === "identifier") {
             if (tokens[current+1]?.value === "(") {
 
                 const node = {
@@ -162,18 +162,18 @@ function parser(tokens: Array<token>) {
             current++;
             return node;
         }
-        if (token.type == "operator") {
+        if (token.type === "operator") {
             current++;
             return {
                 type: "BinaryOperator",
                 value: token.value
             };
         }
-        if (token.type == "comma") {
+        if (token.type === "comma") {
             current++;
             return walk();
         }
-        if (token.type == "assignation") {
+        if (token.type === "assignation") {
             current++;
             return {
                 type: "Assignation",
@@ -227,7 +227,7 @@ function isNumber(token: string) {
 }
 
 function isAlpha(token: string) {
-    return (token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z' || token == '_');
+    return (token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z' || token === '_');
 }
 
 main();
