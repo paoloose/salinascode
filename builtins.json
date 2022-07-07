@@ -1,0 +1,36 @@
+{
+    "variableTypes": [
+        "ENTERO",
+        "REAL",
+        "CARACTER",
+        "CADENA",
+        "BOOLEANO"
+    ],
+    "functions": [
+        "MAX",
+        "MIN",
+        "LEER",
+        "ESCRIBIR",
+        "SENO",
+        "COSENO",
+        "TANGENTE",
+        "RAIZ",
+        "LOG"
+    ],
+    "logic": [
+        "Y",
+        "O",
+        ">",
+        "<",
+        ">=",
+        "<=",
+        "==",
+        "!="
+    ],
+    "statements": [
+        "SI",
+        "SINO",
+        "MIENTRAS",
+        "HACER"
+    ]
+}

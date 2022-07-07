@@ -1,4 +1,5 @@
 import { token, ast_object } from "./types.ts";
+import builtins from "./builtins.json" assert { type: "json"};
 
 export function parser(tokens: Array<token>) {
 
@@ -27,6 +28,10 @@ export function parser(tokens: Array<token>) {
         }
         // Check for variable or fuction call
         if (token.type === "identifier") {
+
+            
+            
+            // Check for function
             if (tokens[current+1]?.value === "(") {
 
                 const node = {
@@ -35,7 +40,7 @@ export function parser(tokens: Array<token>) {
                     arguments: Array<ast_object>()
                 };
                 token = tokens[current+=2]
-
+                
                 while (token.value !== ")") {
                     node.arguments.push(walk());
                     token = tokens[current];
