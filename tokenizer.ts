@@ -8,7 +8,15 @@ function isAlpha(token: string) {
     return (token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z' || token === '_');
 }
 
-export function tokenizer(line: string) {
+export function tokenizer(lines: Array<string>) {
+    let tokens = Array<token>();
+    for (const line of lines) {
+        tokens = tokens.concat(tokenize(line));
+    }
+    return tokens;
+}
+
+function tokenize(line: string): Array<token> {
     const tokens = Array<token>();
 
     let current = 0;

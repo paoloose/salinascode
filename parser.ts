@@ -3,7 +3,10 @@ import { token, ast_object } from "./types.ts";
 export function parser(tokens: Array<token>) {
 
     let current = 0;
-    const nodesTree = Array<ast_object>();
+    const ast = {
+        type: "Program",
+        body: Array<ast_object>()
+    }
 
     function walk() : ast_object {
         let token = tokens[current];
@@ -85,7 +88,7 @@ export function parser(tokens: Array<token>) {
     }
 
     while (current < tokens.length) {
-        nodesTree.push(walk());
+        ast.body.push(walk());
     }
-    return nodesTree;
+    return ast;
 }

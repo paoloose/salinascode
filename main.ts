@@ -11,24 +11,19 @@ async function main() {
         console.log("Uso correcto: salinascode <filename>.salinas\n");
         Deno.exit(-1);
     }
-
     const fileName = Deno.args[0];
 
-    for (const line of await readSourceLines(fileName) || []) {
-        if (line.trim().length > 0) {
-            console.log(`\nLine: ${line}`);
+    const sourceLines = await readSourceLines(fileName);
 
-            console.log("\nTokenizing:");
-            const tokens = tokenizer(line);
-            console.log(tokens);
+    // Tokenize source code
+    console.log("\nTokenizing:");
+    const tokens = tokenizer(sourceLines);
+    console.log(tokens);
 
-            console.log("\nParsing to AST:");
-            const ast = parser(tokens);
-            console.log(JSON.stringify(ast, null, 2));
-
-            console.log("\n--------------------------------------------");
-        }
-    }
+    // Translate tokens and create the Abstract Syntax Tree Program
+    console.log("\nParsing to AST:");
+    const ast = parser(tokens);
+    console.log(JSON.stringify(ast, null, 2));
 
     Deno.exit(0);
 }
