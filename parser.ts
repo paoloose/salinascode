@@ -1,13 +1,21 @@
-import { token, ast_object } from "./types.ts";
-import builtins from "./builtins.json" assert { type: "json"};
+import { tokenized_line, variable, ast_object } from "./types.ts";
+import { isNativeType, parseValue, initialValueFromType } from "./builtinsHelpers.ts";
 
-export function parser(tokens: Array<token>) {
-
-    let current = 0;
+export function parser(tokens: Array<tokenized_line>) {
     const ast = {
         type: "Program",
-        body: Array<ast_object>()
+        body: Array<Array<ast_object>>()
     }
+    for (const line of tokens) {
+        ast.body.push(parseLine(line));
+    }
+    return ast;
+}
+
+function parseLine(tokens: tokenized_line) {
+
+    let current = 0;
+    const parsedLine: Array<ast_object> = Array<ast_object>();
 
     function walk() : ast_object {
         let token = tokens[current];
@@ -29,8 +37,56 @@ export function parser(tokens: Array<token>) {
         // Check for variable or fuction call
         if (token.type === "identifier") {
 
-            
-            
+            if (isNativeType(token.value)) {
+
+                const variableType = token.value;
+                const initialValue = initialValueFromType(variableType);
+
+                const node = {
+                    type: "VariableDefinitions",
+                    variableType: variableType,
+                    variables: Array<variable>()
+                }
+                current++;
+                while (current < tokens.length) {
+                    token = tokens[current];
+                    // variable name
+                    if (token.type === "comma") {
+                        current++;
+                        continue;
+                    }
+                    else if (token.type === "identifier") {
+                        if (current === tokens.length - 1) break; // last variable
+
+                        if (tokens[current+1].type === "assignation") {
+                            const variableName = token.value;
+                            current+=2;
+                            node.variables.push({
+                                name: variableName,
+                                value: parseValue(variableType, tokens[current].value)
+                            });
+                            current++;
+                        }
+                        else if (tokens[current+1].type === "comma") {
+                            node.variables.push({
+                                name: tokens[current].value,
+                                value: initialValue
+                            });
+                            current++;
+                        }
+                        else {
+                            console.log(`Parsing error: Unexpected token '${tokens[current+1].value}' at declaration`)
+                            Deno.exit(-1);
+                        }
+                    }
+                    else {
+                        console.log(`Parsing error: Unexpected token while declaration: '${token.value}'`);
+                        Deno.exit(-1);
+                    }
+
+                }
+                return node;
+            }
             // Check for function
             if (tokens[current+1]?.value === "(") {
 
@@ -93,7 +149,7 @@ export function parser(tokens: Array<token>) {
     }
 
     while (current < tokens.length) {
-        ast.body.push(walk());
+        parsedLine.push(walk());
     }
-    return ast;
+    return parsedLine;
 }

@@ -17,12 +17,12 @@ async function main() {
 
     // Tokenize source code
     console.log("\nTokenizing:");
-    const tokens = tokenizer(sourceLines);
-    console.log(tokens);
+    const linesTokens = tokenizer(sourceLines);
+    console.log(linesTokens);
 
     // Translate tokens and create the Abstract Syntax Tree Program
     console.log("\nParsing to AST:");
-    const ast = parser(tokens);
+    const ast = parser(linesTokens);
     console.log(JSON.stringify(ast, null, 2));
 
     Deno.exit(0);

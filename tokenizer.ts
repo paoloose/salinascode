@@ -9,9 +9,10 @@ function isAlpha(token: string) {
 }
 
 export function tokenizer(lines: Array<string>) {
-    let tokens = Array<token>();
+    const tokens = Array<Array<token>>();
     for (const line of lines) {
-        tokens = tokens.concat(tokenize(line));
+        if (line.trim().length > 0)
+            tokens.push(tokenize(line));
     }
     return tokens;
 }

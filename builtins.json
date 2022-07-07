@@ -1,10 +1,25 @@
 {
-    "variableTypes": [
-        "ENTERO",
-        "REAL",
-        "CARACTER",
-        "CADENA",
-        "BOOLEANO"
+    "nativeTypes": [
+        {
+            "identifier": "ENTERO",
+            "initialValue": 0
+        },
+        {
+            "identifier": "REAL",
+            "initialValue": 0.0
+        },
+        {
+            "identifier": "CARACTER",
+            "initialValue": ""
+        },
+        {
+            "identifier": "CADENA",
+            "initialValue": ""
+        },
+        {
+            "identifier": "BOOLEANO",
+            "initialValue": false
+        }
     ],
     "functions": [
         "MAX",
@@ -27,10 +42,11 @@
         "==",
         "!="
     ],
-    "statements": [
+    "controlEstructures": [
         "SI",
         "SINO",
         "MIENTRAS",
-        "HACER"
+        "HACER",
+        "PARA"
     ]
 }
