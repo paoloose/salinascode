@@ -21,6 +21,10 @@ export function isNativeType(typename: string) {
     )) !== -1;
 }
 
+export function isControlStructure(typename: string) {
+    return builtins.controlStructures.includes(typename);
+}
+
 export function initialValueFromType(typeName: string) {
     return builtins.nativeTypes.find(type => (
         type.identifier === typeName

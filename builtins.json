@@ -57,7 +57,7 @@
         "==",
         "!="
     ],
-    "controlEstructures": [
+    "controlStructures": [
         "SI",
         "SINO",
         "MIENTRAS",

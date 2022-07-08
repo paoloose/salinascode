@@ -1,5 +1,5 @@
 import { tokenized_line, variable, ast_object } from "./types.ts";
-import { isNativeType, parseValue, initialValueFromType } from "./builtinsHelpers.ts";
+import { isNativeType, isControlStructure, initialValueFromType } from "./builtinsHelpers.ts";
 
 export function parser(tokens: Array<tokenized_line>) {
     const ast = {
@@ -37,6 +37,17 @@ function parseLine(tokens: tokenized_line) {
         // Check for variable or fuction call
         if (token.type === "identifier") {
 
+            if (isControlStructure(token.value)) {
+                if (token.value === "SI") {
+                    current++;
+                    const nodeStruct = {
+                        type: "IfStatement",
+                        condition: walk(),
+
+                    }
+                    return nodeStruct;
+                }
+            }
             if (isNativeType(token.value)) {
 
                 const variableType = token.value;
