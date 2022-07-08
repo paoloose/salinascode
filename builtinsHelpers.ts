@@ -1,4 +1,5 @@
 import builtins from "./builtins.json" assert { type: "json"};
+import { literal } from "./types.ts";
 
 export function parseValue(typename: string, value: string): string | number | boolean {
     if (typename === "CADENA") {
@@ -25,7 +26,7 @@ export function isControlStatement(typename: string) {
     return builtins.isControlStatements.includes(typename);
 }
 
-export function initialValueFromType(typeName: string) {
+export function initialValueFromType(typeName: string): literal {
     return builtins.nativeTypes.find(type => (
         type.identifier === typeName
     ))?.initialValue ?? {

@@ -1,11 +1,11 @@
-import { tokenized_line, variable, ast_object, statement_block } from "./types.ts";
+import { tokenized_line, variable_info, ast_object, literal, identifier, statement_block } from "./types.ts";
 import { isNativeType, isControlStatement, initialValueFromType } from "./builtinsHelpers.ts";
 
 export function parser(lines: Array<tokenized_line>) {
 
     let currentLine = 0;
 
-    function walkLine() {
+    function walkLine(): Array<ast_object> {
     
         const tokensLine = lines[currentLine];
         let currentToken = 0;
@@ -19,14 +19,14 @@ export function parser(lines: Array<tokenized_line>) {
                 return {
                     type: "NumberLiteral",
                     value: Number(token.value)
-                };
+                } as literal;
             }
             if (token.type === "string") {
                 currentToken++;
                 return {
                     type: "StringLiteral",
                     value: token.value
-                };
+                } as literal;
             }
             // Check for variable or fuction call
             if (token.type === "identifier") {
@@ -73,25 +73,25 @@ export function parser(lines: Array<tokenized_line>) {
                     const node = {
                         type: "VariableDefinitions",
                         variableType: variableType,
-                        definitions: Array<variable>()
+                        definitions: Array<variable_info>()
                     }
                     currentToken++;
                     while (currentToken < tokensLine.length) {
     
                         token = tokensLine[currentToken];
-                        // variable name
+
                         if (token.type === "comma") {
                             currentToken++;
                             continue;
                         }
                         else if (token.type === "identifier") {
-                            // last variable
+                            // reading last variable
                             if (currentToken === tokensLine.length - 1) {
                                 const variableName = token.value;
                                 node.definitions.push({
                                     name: variableName,
                                     value: initialValue
-                                });
+                                } as variable_info);
                                 currentToken++;
                                 break;
                             }
@@ -101,14 +101,14 @@ export function parser(lines: Array<tokenized_line>) {
                                 node.definitions.push({
                                     name: variableName,
                                     value: walkToken()
-                                });
+                                } as variable_info);
                                 currentToken++;
                             }
                             else if (tokensLine[currentToken+1].type === "comma") {
                                 node.definitions.push({
                                     name: tokensLine[currentToken].value,
                                     value: initialValue
-                                });
+                                } as variable_info);
                                 currentToken++;
                             }
                             else {
@@ -145,8 +145,8 @@ export function parser(lines: Array<tokenized_line>) {
                     currentToken++;
                     return {
                         type: "Identifier",
-                        value: token.value
-                    };
+                        name: token.value
+                    } as identifier;
                 }
             }
             if (token.type === "paren" && token.value === "(") {
@@ -166,23 +166,16 @@ export function parser(lines: Array<tokenized_line>) {
             if (token.type === "operator") {
                 currentToken++;
                 return {
-                    type: "BinaryOperator",
+                    type: "Operator",
                     value: token.value
-                };
+                } as literal; // TODO: parse operators as function calls
             }
             if (token.type === "comma") {
                 currentToken++;
                 return walkToken();
             }
-            if (token.type === "assignation") {
-                currentToken++;
-                return {
-                    type: "Assignation",
-                    value: token.value
-                };
-            }
-    
-            throw TypeError(`Parser: unknown token type: ${token.type} = ${token.value}`);
+
+            throw TypeError(`Parser: unknown token type: ${token.type} -> ${token.value}`);
         }
     
         while (currentToken < tokensLine.length) {

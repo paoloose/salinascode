@@ -41,8 +41,8 @@
         "MIN",
         "LEER",
         "ESCRIBIR",
-        "SENO",
-        "COSENO",
+        "SEN",
+        "COS",
         "TANGENTE",
         "RAIZ",
         "LOG"
@@ -54,8 +54,8 @@
         "<",
         ">=",
         "<=",
-        "==",
-        "!="
+        "=",
+        "≠"
     ],
     "isControlStatements": [
         "SI",
