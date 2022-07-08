@@ -56,9 +56,17 @@ function parseLine(tokens: tokenized_line) {
                         continue;
                     }
                     else if (token.type === "identifier") {
-                        if (current === tokens.length - 1) break; // last variable
-
-                        if (tokens[current+1].type === "assignation") {
+                        // last variable
+                        if (current === tokens.length - 1) {
+                            const variableName = token.value;
+                            node.variables.push({
+                                name: variableName,
+                                value: initialValue
+                            });
+                            current++;
+                            break;
+                        }
+                        else if (tokens[current+1].type === "assignation") {
                             const variableName = token.value;
                             current+=2;
                             node.variables.push({
@@ -84,7 +92,7 @@ function parseLine(tokens: tokenized_line) {
                         Deno.exit(-1);
                     }
 
-                }
+                } // while loop for variable declaration end here
                 return node;
             }
             // Check for function
