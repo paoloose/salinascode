@@ -13,7 +13,7 @@ export interface ast_object {
 
 export interface variable {
     name: string;
-    value: string | number | boolean;
+    value: string | number | boolean | ast_object;
 }
 
 export interface ast {

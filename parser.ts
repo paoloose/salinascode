@@ -45,10 +45,11 @@ function parseLine(tokens: tokenized_line) {
                 const node = {
                     type: "VariableDefinitions",
                     variableType: variableType,
-                    variables: Array<variable>()
+                    definitions: Array<variable>()
                 }
                 current++;
                 while (current < tokens.length) {
+
                     token = tokens[current];
                     // variable name
                     if (token.type === "comma") {
@@ -59,7 +60,7 @@ function parseLine(tokens: tokenized_line) {
                         // last variable
                         if (current === tokens.length - 1) {
                             const variableName = token.value;
-                            node.variables.push({
+                            node.definitions.push({
                                 name: variableName,
                                 value: initialValue
                             });
@@ -69,14 +70,14 @@ function parseLine(tokens: tokenized_line) {
                         else if (tokens[current+1].type === "assignation") {
                             const variableName = token.value;
                             current+=2;
-                            node.variables.push({
+                            node.definitions.push({
                                 name: variableName,
-                                value: parseValue(variableType, tokens[current].value)
+                                value: walk()
                             });
                             current++;
                         }
                         else if (tokens[current+1].type === "comma") {
-                            node.variables.push({
+                            node.definitions.push({
                                 name: tokens[current].value,
                                 value: initialValue
                             });
@@ -96,7 +97,7 @@ function parseLine(tokens: tokenized_line) {
                 return node;
             }
             // Check for function
-            if (tokens[current+1]?.value === "(") {
+            else if (tokens[current+1]?.value === "(") {
 
                 const node = {
                     type: "CallExpression",
