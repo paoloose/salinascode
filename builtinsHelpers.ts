@@ -21,8 +21,8 @@ export function isNativeType(typename: string) {
     )) !== -1;
 }
 
-export function isControlStructure(typename: string) {
-    return builtins.controlStructures.includes(typename);
+export function isControlStatement(typename: string) {
+    return builtins.isControlStatements.includes(typename);
 }
 
 export function initialValueFromType(typeName: string) {

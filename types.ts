@@ -11,6 +11,11 @@ export interface ast_object {
     arguments?: Array<ast_object>;
 }
 
+export interface statement_block {
+    type: "StatementBlock";
+    statements: Array<Array<ast_object>>;
+}
+
 export interface variable {
     name: string;
     value: string | number | boolean | ast_object;
