@@ -7,7 +7,7 @@ export type tokenized_line = Array<token>;
 
 export interface ast_object {
     type: string;
-    value?: string | number;
+    value?: string | number | boolean;
     arguments?: Array<ast_object>;
 }
 

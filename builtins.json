@@ -2,23 +2,38 @@
     "nativeTypes": [
         {
             "identifier": "ENTERO",
-            "initialValue": 0
+            "initialValue": {
+                "type": "NumberLiteral",
+                "value": 0
+            }
         },
         {
             "identifier": "REAL",
-            "initialValue": 0.0
+            "initialValue": {
+                "type": "NumberLiteral",
+                "value": 0.0
+            }
         },
         {
             "identifier": "CARACTER",
-            "initialValue": ""
+            "initialValue": {
+                "type": "StringLiteral",
+                "value": ""
+            }
         },
         {
             "identifier": "CADENA",
-            "initialValue": ""
+            "initialValue": {
+                "type": "StringLiteral",
+                "value": ""
+            }
         },
         {
             "identifier": "BOOLEANO",
-            "initialValue": false
+            "initialValue": {
+                "type": "BooleanLiteral",
+                "value": false
+            }
         }
     ],
     "functions": [

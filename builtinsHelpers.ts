@@ -24,5 +24,8 @@ export function isNativeType(typename: string) {
 export function initialValueFromType(typeName: string) {
     return builtins.nativeTypes.find(type => (
         type.identifier === typeName
-    ))?.initialValue ?? 0;
+    ))?.initialValue ?? {
+        type: "Unknown",
+        value: "Unknown"
+    };
 }
