@@ -7,8 +7,8 @@ async function main() {
 
     if (Deno.args.length === 0) {
         console.log("Salinascode: error: Archivo sin nombre");
-        console.log("  Falta nombre de archivo. No sabe leer?\n");
-        console.log("Uso correcto: salinascode <filename>.salinas\n");
+        console.log("  Falta nombre de archivo. No sabe leer?");
+        console.log("Uso correcto: salinascode <filename>.salinas");
         Deno.exit(-1);
     }
     const fileName = Deno.args[0];

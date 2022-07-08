@@ -7,8 +7,8 @@ export async function readSourceLines(fileName: string) {
         
     } catch {
         console.log(`Salinascode: error: '${fileName}' no encontrado`);
-        console.log("  Esta seguro de que existe el archivo?... JOVEN?\n");
-        console.log("Uso correcto: salinascode <filename>.salinas\n");
+        console.log("  Esta seguro de que existe el archivo?... JOVEN?");
+        console.log("Uso correcto: salinascode <filename>.salinas");
         Deno.exit(-1);
     }
 }
