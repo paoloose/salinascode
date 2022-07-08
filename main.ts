@@ -6,7 +6,7 @@ import { parser } from "./parser.ts";
 async function main() {
 
     if (Deno.args.length === 0) {
-        console.log("Salinascode: error: Archivo sin nombre\n");
+        console.log("Salinascode: error: Archivo sin nombre");
         console.log("  Falta nombre de archivo. No sabe leer?\n");
         console.log("Uso correcto: salinascode <filename>.salinas\n");
         Deno.exit(-1);
