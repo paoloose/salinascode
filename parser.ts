@@ -23,16 +23,14 @@ export function parser(lines: Array<tokenized_line>) {
                     value: Number(token.value)
                 } as literal;
             }
-            if (token.type === "string") {
+            else if (token.type === "string") {
                 currentToken++;
                 return {
                     type: "StringLiteral",
                     value: token.value
                 } as literal;
             }
-            // Check for variable or fuction call
-            if (token.type === "identifier") {
-
+            else if (token.type === "keyword") {
                 if (token.value === "VERDADERO" || token.value === "FALSO") {
                     currentToken++;
                     return {
@@ -96,7 +94,7 @@ export function parser(lines: Array<tokenized_line>) {
                             statementNode.body.statements.push(walkLine());
                         }
                         currentLine++;
-
+    
                         return statementNode;
                     }
                     else if (token.value === "HACER") {
@@ -133,7 +131,7 @@ export function parser(lines: Array<tokenized_line>) {
                     while (currentToken < tokensLine.length) {
     
                         token = tokensLine[currentToken];
-
+    
                         if (token.type === "comma") {
                             currentToken++;
                             continue;
@@ -171,7 +169,7 @@ export function parser(lines: Array<tokenized_line>) {
                             }
                         }
                         else {
-                            console.log(`Parsing error: Unexpected token while declaration: '${token.value}'`);
+                            console.log(`Parsing error: Unexpected token while declaration: '${tokensLine[currentToken].value}'`);
                             Deno.exit(-1);
                         }
     
@@ -179,8 +177,13 @@ export function parser(lines: Array<tokenized_line>) {
                     currentLine++;
                     return node;
                 }
-                // Check for function
-                else if (tokensLine[currentToken+1]?.value === "(") {
+            }
+
+            // Check for variable or fuction call
+            else if (token.type === "identifier") {
+
+                // Check for function call
+                if (tokensLine[currentToken+1]?.value === "(") {
                     const node = {
                         type: "CallExpression",
                         name: token.value,
@@ -198,12 +201,12 @@ export function parser(lines: Array<tokenized_line>) {
                 else {
                     currentToken++;
                     return {
-                        type: "Identifier",
+                        type: "UserDefinedVariable",
                         name: token.value
                     } as identifier;
                 }
             }
-            if (token.type === "paren" && token.value === "(") {
+            else if (token.type === "paren" && token.value === "(") {
                 
                 console.log("Parsing parenthesis");
                 const node = {
@@ -219,14 +222,14 @@ export function parser(lines: Array<tokenized_line>) {
                 console.log("Closing parenthesis");
                 return node;
             }
-            if (token.type === "operator") {
+            else if (token.type === "operator") {
                 currentToken++;
                 return {
                     type: "Operator",
                     value: token.value
                 } as literal; // TODO: parse operators as function calls
             }
-            if (token.type === "comma") {
+            else if (token.type === "comma") {
                 currentToken++;
                 return walkToken();
             }

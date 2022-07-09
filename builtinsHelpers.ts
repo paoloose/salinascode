@@ -26,6 +26,13 @@ export function isControlStatement(typename: string) {
     return builtins.isControlStatements.includes(typename);
 }
 
+export function isKeyword(name: string) {
+    return isNativeType(name)
+        || isControlStatement(name)
+        || name === "VERDADERO"
+        || name === "FALSO"
+} // TODO: Support other keywords like RETURN, BREAK, CONTINUE, ...
+
 export function initialValueFromType(typeName: string): literal {
     return builtins.nativeTypes.find(type => (
         type.identifier === typeName

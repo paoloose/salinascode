@@ -41,6 +41,14 @@
         "MIN",
         "LEER",
         "ESCRIBIR",
+
+        "SUMAR",
+        "RESTAR",
+        "MULTIPLICAR",
+        "DIVIDIR",
+        "MODULO",
+        "POTENCIA",
+
         "SEN",
         "COS",
         "TANGENTE",
@@ -56,6 +64,20 @@
         "<=",
         "=",
         "≠"
+    ],
+    "operators": [
+        "+",
+        "-",
+        "*",
+        "**",
+        "/"
+    ],
+    "punctuators": [
+        "(",
+        ")",
+        "[",
+        "]",
+        ","
     ],
     "isControlStatements": [
         "SI",
