@@ -12,8 +12,13 @@ function isAlpha(token: string) {
 export function tokenizer(lines: Array<string>) {
     const tokens = Array<Array<token>>();
     for (const line of lines) {
-        if (line.trim().length > 0)
-            tokens.push(tokenize(line));
+        if (line.trim().length > 0) {
+            const tokenizedLine = tokenize(line);
+            if (tokenizedLine.length !== 0) {
+                tokens.push(tokenizedLine);
+            }
+
+        }
     }
     return tokens;
 }
@@ -49,6 +54,17 @@ function tokenize(line: string): Array<token> {
             tokens.push({type: "operator", value: "-"});
             currentChar++;
             continue;
+        }
+        else if (token === '/') {
+            if (line[currentChar + 1] === '/') {
+                // Found a comment, skipping the rest of the line
+                break;
+            }
+            else {
+                tokens.push({type: "operator", value: "/"});
+                currentChar++;
+                continue;
+            }
         }
         else if (token === ',') {
             tokens.push({type: "comma", value: ","});
