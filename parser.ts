@@ -10,12 +10,12 @@ export function parser(lines: Array<tokenized_line>) {
         let tokensLine = lines[currentLine];
         let currentToken = 0;
         const parsedLine: Array<ast_object> = Array<ast_object>();
-        console.log("Walking LINE with line:", lines[currentLine], "and token:", tokensLine[currentToken], currentLine, currentToken, "\n");
+        console.log("Walking LINE with line", currentLine+1, ":", lines[currentLine], "and token:", currentToken, "\n");
     
         function walkToken() : ast_object {
             tokensLine = lines[currentLine];
             let token = tokensLine[currentToken];
-            
+
             if (token.type === "number") {
                 currentToken++;
                 return {
@@ -25,6 +25,7 @@ export function parser(lines: Array<tokenized_line>) {
             }
             else if (token.type === "string") {
                 currentToken++;
+                console.log("Found string:", token.value);
                 return {
                     type: "StringLiteral",
                     value: token.value
@@ -164,12 +165,12 @@ export function parser(lines: Array<tokenized_line>) {
                                 currentToken++;
                             }
                             else {
-                                console.log(`Parsing error: Unexpected token '${tokensLine[currentToken+1].value}' at declaration`)
+                                console.log(`Parsing error: Unexpected token '${tokensLine[currentToken+1].value}' at declaration in line`, currentLine+1);
                                 Deno.exit(-1);
                             }
                         }
                         else {
-                            console.log(`Parsing error: Unexpected token while declaration: '${tokensLine[currentToken].value}'`);
+                            console.log(`Parsing error: Unexpected token while declaration: '${tokensLine[currentToken].value} at line `, currentLine+1);
                             Deno.exit(-1);
                         }
     
@@ -189,9 +190,11 @@ export function parser(lines: Array<tokenized_line>) {
                         name: token.value,
                         arguments: Array<ast_object>()
                     };
-                    token = tokensLine[currentToken+=2]
+                    token = tokensLine[currentToken+=2];
+
+                    console.log("Looping arguments:", token ,"\n");
                     
-                    while (token.value !== ")") {
+                    while (tokensLine[currentToken].value !== ")") {
                         node.arguments.push(walkToken());
                     }
                     currentToken++;
@@ -214,9 +217,8 @@ export function parser(lines: Array<tokenized_line>) {
                     arguments: Array<ast_object>()
                 };
                 token = tokensLine[++currentToken];
-                while (token.value !== ")") {
+                while (tokensLine[currentToken].value !== ")") {
                     node.arguments.push(walkToken());
-                    token = tokensLine[currentToken];
                 }
                 currentToken++;
                 console.log("Closing parenthesis");
@@ -234,13 +236,13 @@ export function parser(lines: Array<tokenized_line>) {
                 return walkToken();
             }
 
-            throw TypeError(`Parser: unknown token type: ${token.type} -> ${token.value}`);
+            throw TypeError(`Parser: unknown token type: ${token.type} -> '${token.value}' at line ${currentLine+1}`);
         }
     
         while (currentToken < tokensLine.length) {
             parsedLine.push(walkToken());
         }
-        console.log("Exiting from line", currentLine, "and returning", parsedLine);
+        console.log("Exiting from line", currentLine+1, "and returning", parsedLine);
         return parsedLine;
     }
 
@@ -255,7 +257,7 @@ export function parser(lines: Array<tokenized_line>) {
 
     while (currentLine < lines.length) {
         ast.body.statements.push(walkLine());
-        console.log("💀 Current line: ", currentLine, "of", lines.length, "\n");
+        console.log("💀 Current line: ", currentLine+1, "of", lines.length, "\n");
     }
     return ast;
 }
