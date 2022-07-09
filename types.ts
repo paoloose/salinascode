@@ -13,7 +13,7 @@ export interface identifier extends ast_object {
     name: string;
 }
 export interface literal extends ast_object {
-    value: string | number | boolean | null;
+    value: string | number | boolean | undefined;
 }
 export interface call_expression extends ast_object {
     type: "CallExpression";

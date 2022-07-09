@@ -32,8 +32,15 @@ export function parser(lines: Array<tokenized_line>) {
             }
             // Check for variable or fuction call
             if (token.type === "identifier") {
-    
-                if (isControlStatement(token.value)) {
+
+                if (token.value === "VERDADERO" || token.value === "FALSO") {
+                    currentToken++;
+                    return {
+                        type: "BooleanLiteral",
+                        value: (token.value === "VERDADERO") ? true : false
+                    } as literal;
+                }
+                else if (isControlStatement(token.value)) {
                     if (token.value === "SI") {
                         currentToken++; // Skip SI to get the condition
                         // if no condition exist, this will trhow an error
@@ -112,7 +119,7 @@ export function parser(lines: Array<tokenized_line>) {
                         return statementNode;
                     }
                 }
-                if (isNativeType(token.value)) {
+                else if (isNativeType(token.value)) {
     
                     const variableType = token.value;
                     const initialValue = initialValueFromType(variableType);
