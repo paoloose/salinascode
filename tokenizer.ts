@@ -30,37 +30,37 @@ function tokenize(line: string): Array<token> {
             currentChar++;
             continue;
         }
-        if (token === '(') {
+        else if (token === '(') {
             tokens.push({type: "paren", value: "("});
             currentChar++;
             continue;
         }
-        if (token === ')') {
+        else if (token === ')') {
             tokens.push({type: "paren", value: ")"});
             currentChar++;
             continue;
         }
-        if (token === '+') {
+        else if (token === '+') {
             tokens.push({type: "operator", value: "+"});
             currentChar++;
             continue;
         }
-        if (token === '-') {
+        else if (token === '-') {
             tokens.push({type: "operator", value: "-"});
             currentChar++;
             continue;
         }
-        if (token === ',') {
+        else if (token === ',') {
             tokens.push({type: "comma", value: ","});
             currentChar++;
             continue;
         }
-        if (token === '←') {
+        else if (token === '←') {
             tokens.push({type: "assignation", value: "←"});
             currentChar++;
             continue;
         }
-        if (token === '"' || token === '“' || token === '”') {
+        else if (token === '"' || token === '“' || token === '”') {
             let str = "";
             while (line[++currentChar] != '"' && line[currentChar] != '”' && line[currentChar] != '“') {
                 str += line[currentChar];
@@ -70,7 +70,7 @@ function tokenize(line: string): Array<token> {
             continue;
         }
         // /[a-z]|_/i
-        if (isAlpha(token)) {
+        else if (isAlpha(token)) {
             let identifierName = "";
             do {
                 identifierName += line[currentChar];
@@ -85,7 +85,7 @@ function tokenize(line: string): Array<token> {
             }
             continue;
         }
-        if (isNumber(token)) {
+        else if (isNumber(token)) {
             let num = "";
             do {
                 num += line[currentChar];
@@ -94,9 +94,10 @@ function tokenize(line: string): Array<token> {
             tokens.push({type: "number", value: num});
             continue;
         }
-
-        console.log(`unknown token: ${token}`);
-        currentChar++;
+        else {
+            console.log(`Tokenizer error: unknown token '${token}' (maybe not supported yet)`);
+            Deno.exit(-1);
+        }
     }
     return tokens;
 }
