@@ -10,7 +10,7 @@ export function parser(lines: Array<tokenized_line>) {
         let tokensLine = lines[currentLine];
         let currentToken = 0;
         const parsedLine: Array<ast_object> = Array<ast_object>();
-        console.log("Walking LINE with line", currentLine+1, ":", lines[currentLine], "and token:", currentToken, "\n");
+        console.log(" Calling walkLine() to line", currentLine+1, ":", lines[currentLine], "at token:", currentToken, "\n");
     
         function walkToken() : ast_object {
             tokensLine = lines[currentLine];
@@ -44,7 +44,7 @@ export function parser(lines: Array<tokenized_line>) {
                         currentToken++; // Skip SI to get the condition
                         // if no condition exist, this will trhow an error
                         const ifCondition = walkToken();
-                        currentLine++;  // Skip the line with the condition
+                        currentLine++; // Skip the SI line
                         let endOnTrueBlock = false;
                         const statementNode = {
                             type: "IfStatement",
@@ -72,7 +72,6 @@ export function parser(lines: Array<tokenized_line>) {
                             }
                             tokensLine = lines[currentLine];
                         }
-                        currentLine++; // Skip the FIN_SI
                         currentToken = tokensLine.length;
                         return statementNode;
                     }
@@ -80,9 +79,9 @@ export function parser(lines: Array<tokenized_line>) {
                         currentToken++; // Skip MIENTRAS to get the condition
                         console.log("Walking the condition:\n");
                         const condition = walkToken();
-                        currentLine++;  // Skip the statement 
-                        currentToken = 0; // Reset the token position
-                        console.log("Pushing condition:", condition, "\n");
+                        // currentToken = 0; // Reset the token position
+                        console.log("Pushing condition:", condition, currentToken, "\n");
+                        currentLine++; // Skip the MIENTRAS line
                         const statementNode = {
                             type: "WhileStatement",
                             condition: condition,
@@ -94,7 +93,7 @@ export function parser(lines: Array<tokenized_line>) {
                         while (lines[currentLine][0].value !== "FIN_MIENTRAS") {
                             statementNode.body.statements.push(walkLine());
                         }
-                        currentLine++;
+                        console.log("Pushing while statement:", statementNode, "with line", currentLine, "\n");
     
                         return statementNode;
                     }
@@ -114,7 +113,6 @@ export function parser(lines: Array<tokenized_line>) {
                         /// Now in the line with the condition
                         currentToken = 1; // Update tokenIndex to point to the condition
                         statementNode.condition = walkToken();
-                        currentLine++; // Skip the MIENTRAS line
                         return statementNode;
                     }
                 }
@@ -128,9 +126,8 @@ export function parser(lines: Array<tokenized_line>) {
                         variableType: variableType,
                         definitions: Array<variable_info>()
                     }
-                    currentToken++;
+                    currentToken++; // Skip the type
                     while (currentToken < tokensLine.length) {
-    
                         token = tokensLine[currentToken];
     
                         if (token.type === "comma") {
@@ -139,7 +136,7 @@ export function parser(lines: Array<tokenized_line>) {
                         }
                         else if (token.type === "identifier") {
                             // reading last variable
-                            if (currentToken === tokensLine.length - 1) {
+                            if (currentToken === tokensLine.length-1) {
                                 const variableName = token.value;
                                 node.definitions.push({
                                     name: variableName,
@@ -155,7 +152,7 @@ export function parser(lines: Array<tokenized_line>) {
                                     name: variableName,
                                     value: walkToken()
                                 } as variable_info);
-                                currentToken++;
+                                // currentToken++; 🫂 🫂 🫂 🫂 
                             }
                             else if (tokensLine[currentToken+1].type === "comma") {
                                 node.definitions.push({
@@ -173,9 +170,8 @@ export function parser(lines: Array<tokenized_line>) {
                             console.log(`Parsing error: Unexpected token while declaration: '${tokensLine[currentToken].value} at line `, currentLine+1);
                             Deno.exit(-1);
                         }
-    
                     } // while loop for variable declaration end here
-                    currentLine++;
+                    //currentLine++;
                     return node;
                 }
             }
@@ -198,7 +194,6 @@ export function parser(lines: Array<tokenized_line>) {
                         node.arguments.push(walkToken());
                     }
                     currentToken++;
-                    currentLine++; // Skip function call line
                     return node;
                 }
                 else {
@@ -220,8 +215,8 @@ export function parser(lines: Array<tokenized_line>) {
                 while (tokensLine[currentToken].value !== ")") {
                     node.arguments.push(walkToken());
                 }
+                console.log(`Closing parenthesis on token ${currentToken+1} of ${tokensLine.length} (line ${currentLine})`);
                 currentToken++;
-                console.log("Closing parenthesis");
                 return node;
             }
             else if (token.type === "operator") {
@@ -240,9 +235,13 @@ export function parser(lines: Array<tokenized_line>) {
         }
     
         while (currentToken < tokensLine.length) {
-            parsedLine.push(walkToken());
+            console.log("🫂 Walking to token:", currentToken+1, "of", tokensLine.length, `(line ${currentLine+1})` , "\n");
+            const walkedToken = walkToken();
+            console.log("👍️ Walked token until token", currentToken+1 , `(line ${currentLine+1})\n`);
+            parsedLine.push(walkedToken);
         }
         console.log("Exiting from line", currentLine+1, "and returning", parsedLine);
+        currentLine++;
         return parsedLine;
     }
 
@@ -256,8 +255,9 @@ export function parser(lines: Array<tokenized_line>) {
     }
 
     while (currentLine < lines.length) {
+        console.log("💀 Walking to line:", currentLine+1, "of", lines.length, "\n");
         ast.body.statements.push(walkLine());
-        console.log("💀 Current line: ", currentLine+1, "of", lines.length, "\n");
+        console.log("🦴 Walked line until line", currentLine+1, "\n");
     }
     return ast;
 }
