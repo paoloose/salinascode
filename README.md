@@ -4,7 +4,7 @@ The official salinascode Compiler Proyect: Work in progress 🫂
 
 ### Taste the glory of a modern language
 1. Clone the repository
-2. Run ```deno run --allow read main.ts <filename>.salinas``` (Deno runtime must be installed)
+2. Run ```deno run --allow-read main.ts <filename>.salinas``` (Deno runtime must be installed)
 
 ### Known bugs
 ```json
