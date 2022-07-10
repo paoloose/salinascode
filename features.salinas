@@ -1,0 +1,45 @@
+/// salinascode features
+
+// this line should not be interpreted
+
+ENTERO num1 ← 123, num2 ← 09, num3 // neither this
+BOOLEANO check ← VERDADERO, test
+CADENA salinas, s3 ← "pseudofamilia"
+
+ENTERO operation ← (20 + (10 + CALL(10, 10)))
+
+IMPRIMIR("pseudorey:")
+LEER("salinas", codigo, por, siempre)
+
+some_variable // "Alone" variables are allowed in C++
+              // also are allowed in salinascode, but I want to throw an error here
+
+// Check empty statements
+SI (1)
+SINO
+FIN_SI
+
+MIENTRAS (1)
+FIN_MIENTRAS
+
+HACER
+MIENTRAS (1)
+
+// Check nested statements
+SI (1)
+    SI (1)
+        MIENTRAS (1)
+            HACER
+                HACER
+                    ENTERO a ← 1312312, b ← 098908, c
+                MIENTRAS (1)
+            MIENTRAS (1)
+        FIN_MIENTRAS
+    FIN_SI
+SINO
+    SI (1)
+        BOOLEANO d ← VERDADERO, e
+    SINO
+        CADENA profe, nombre ← "salinas"
+    FIN_SI
+FIN_SI
