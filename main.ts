@@ -1,6 +1,7 @@
 import { readSourceLines } from "./readSourceLines.ts";
 import { tokenizer } from "./tokenizer.ts";
 import { parser } from "./parser.ts";
+import { VirtualMachine } from "./interpreter.ts";
 
 
 async function main() {
@@ -24,6 +25,11 @@ async function main() {
     console.log("\nParsing to AST:");
     const ast = parser(linesTokens);
     console.log(JSON.stringify(ast, null, 2));
+
+    // Execute the Abstract Syntax Tree Program
+    console.log("\nExecuting AST:");
+    const vm = new VirtualMachine(ast);
+    vm.run();
 
     Deno.exit(0);
 }

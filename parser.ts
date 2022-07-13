@@ -1,7 +1,7 @@
-import { tokenized_line, variable_info, ast_object, literal, identifier, statement_block } from "./types.ts";
+import { tokenized_line, variable_info, ast_object, literal, identifier, statement_block, ast } from "./types.ts";
 import { isNativeType, isControlStatement, initialValueFromType } from "./builtinsHelpers.ts";
 
-export function parser(lines: Array<tokenized_line>) {
+export function parser(lines: Array<tokenized_line>): ast {
 
     let currentLine = 0;
 
@@ -252,7 +252,7 @@ export function parser(lines: Array<tokenized_line>) {
             type: "StatementBlock",
             statements: Array<Array<ast_object>>()
         } as statement_block
-    }
+    } as ast;
 
     while (currentLine < lines.length) {
         console.log("💀 Walking to line:", currentLine+1, "of", lines.length, "\n");
