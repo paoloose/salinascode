@@ -5,8 +5,12 @@ function isNumber(token: string) {
     return (token >= '0' && token <= '9');
 }
 
+function isValidVariableName(name: string) {
+    return /^\p{L}|_/gu.test(name);
+}
+
 function isAlpha(token: string) {
-    return (token >= 'a' && token <= 'z') || (token >= 'A' && token <= 'Z' || token === '_');
+    return /\p{L}|_/u.test(token); // unicode set
 }
 
 export function tokenizer(lines: Array<string>) {
@@ -85,13 +89,14 @@ function tokenize(line: string): Array<token> {
             currentChar++;
             continue;
         }
-        // /[a-z]|_/i
+        // /\p{L}|_/u
         else if (isAlpha(token)) {
             let identifierName = "";
             do {
                 identifierName += line[currentChar];
                 currentChar++;
-            } while (isAlpha(line[currentChar]) || isNumber(line[currentChar]));
+            } while ((isAlpha(line[currentChar]) || isNumber(line[currentChar]))
+                    && currentChar <  line.length);
 
             if (isKeyword(identifierName)) {
                 tokens.push({type: "keyword", value: identifierName});
@@ -101,12 +106,19 @@ function tokenize(line: string): Array<token> {
             }
             continue;
         }
-        else if (isNumber(token)) {
+        else if (isNumber(token) || token === ".") {
             let num = "";
+
             do {
                 num += line[currentChar];
                 currentChar++;
-            } while (isNumber(line[currentChar]));
+            } while (isNumber(line[currentChar]) ||  line[currentChar] === ".");
+
+            if (Number.isNaN(Number(num))) {
+                console.log(`Tokenizer error: Can't interpret '${num}' as a number`);
+                Deno.exit(-1);
+            }
+
             tokens.push({type: "number", value: num});
             continue;
         }
