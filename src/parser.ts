@@ -1,18 +1,18 @@
-import { tokenized_line, variable_info, ast_object, literal, identifier, statement_block, ast } from "./types.ts";
+import { TokenizedLine, VariableInfo, ASTObject, Literal, Identifier, StatementBlock, AST, IfStatement, DoWhileStatement, VariableDefinitions, ParenExpressionGroup, UnaryOperator, BinaryOperator, WhileStatement } from "./types.ts";
 import { isNativeType, isControlStatement, initialValueFromType } from "./builtinsHelpers.ts";
 
-export function parser(lines: Array<tokenized_line>): ast {
+export function parser(lines: Array<TokenizedLine>): AST {
 
     let currentLine = 0;
 
-    function walkLine(): Array<ast_object> {
-    
+    function walkLine(): Array<ASTObject> {
+
         let tokensLine = lines[currentLine];
         let currentToken = 0;
-        const parsedLine: Array<ast_object> = Array<ast_object>();
+        const parsedLine: Array<ASTObject> = Array<ASTObject>();
         console.log(" Calling walkLine() to line", currentLine+1, ":", lines[currentLine], "at token:", currentToken, "\n");
-    
-        function walkToken() : ast_object {
+
+        function walkToken() : ASTObject {
             tokensLine = lines[currentLine];
             let token = tokensLine[currentToken];
 
@@ -21,15 +21,14 @@ export function parser(lines: Array<tokenized_line>): ast {
                 return {
                     type: "NumberLiteral",
                     value: Number(token.value)
-                } as literal;
+                };
             }
             else if (token.type === "string") {
                 currentToken++;
-                console.log("Found string:", token.value);
                 return {
                     type: "StringLiteral",
                     value: token.value
-                } as literal;
+                } as Literal;
             }
             else if (token.type === "keyword") {
                 if (token.value === "VERDADERO" || token.value === "FALSO") {
@@ -37,7 +36,7 @@ export function parser(lines: Array<tokenized_line>): ast {
                     return {
                         type: "BooleanLiteral",
                         value: (token.value === "VERDADERO") ? true : false
-                    } as literal;
+                    } as Literal;
                 }
                 else if (isControlStatement(token.value)) {
                     if (token.value === "SI") {
@@ -46,18 +45,15 @@ export function parser(lines: Array<tokenized_line>): ast {
                         const ifCondition = walkToken();
                         currentLine++; // Skip the SI line
                         let endOnTrueBlock = false;
-                        const statementNode = {
+                        const statementNode: IfStatement = {
                             type: "IfStatement",
                             condition: ifCondition,
                             onTrueBody: {
                                 type: "StatementBlock",
-                                statements: Array<Array<ast_object>>()
-                            } as statement_block,
+                                statements: Array<Array<ASTObject>>()
+                            },
                             // on false block with type StatementBlock with optional statements
-                            onFalseBody: {
-                                type: "StatementBlock",
-                                statements: Array<Array<ast_object>>()
-                            } as statement_block
+                            onFalseBody: null
                         };
                         while (lines[currentLine][0].value !== "FIN_SI") {
                             if (lines[currentLine][0].value === "SINO") {
@@ -65,6 +61,10 @@ export function parser(lines: Array<tokenized_line>): ast {
                                 currentLine++;
                             }
                             else if (endOnTrueBlock) {
+                                statementNode.onFalseBody = {
+                                    type: "StatementBlock",
+                                    statements: Array<Array<ASTObject>>()
+                                };
                                 statementNode.onFalseBody.statements.push(walkLine());
                             }
                             else {
@@ -82,29 +82,29 @@ export function parser(lines: Array<tokenized_line>): ast {
                         // currentToken = 0; // Reset the token position
                         console.log("Pushing condition:", condition, currentToken, "\n");
                         currentLine++; // Skip the MIENTRAS line
-                        const statementNode = {
+                        const statementNode: WhileStatement = {
                             type: "WhileStatement",
                             condition: condition,
                             body: {
                                 type: "StatementBlock",
-                                statements: Array<Array<ast_object>>()
-                            } as statement_block,
+                                statements: Array<Array<ASTObject>>()
+                            },
                         };
                         while (lines[currentLine][0].value !== "FIN_MIENTRAS") {
                             statementNode.body.statements.push(walkLine());
                         }
                         console.log("Pushing while statement:", statementNode, "with line", currentLine, "\n");
-    
+
                         return statementNode;
                     }
                     else if (token.value === "HACER") {
-                        const statementNode = {
+                        const statementNode: DoWhileStatement = {
                             type: "DoWhileStatement",
-                            condition: {} as ast_object,
+                            condition: {} as ASTObject,
                             body: {
                                 type: "StatementBlock",
-                                statements: Array<Array<ast_object>>()
-                            } as statement_block,
+                                statements: Array<Array<ASTObject>>()
+                            },
                         };
                         currentLine++;  // Skip the HACER line
                         while (lines[currentLine][0].value !== "MIENTRAS") {
@@ -117,19 +117,19 @@ export function parser(lines: Array<tokenized_line>): ast {
                     }
                 }
                 else if (isNativeType(token.value)) {
-    
+
                     const variableType = token.value;
                     const initialValue = initialValueFromType(variableType);
-    
-                    const node = {
+
+                    const node: VariableDefinitions = {
                         type: "VariableDefinitions",
                         variableType: variableType,
-                        definitions: Array<variable_info>()
+                        definitions: Array<VariableInfo>()
                     }
                     currentToken++; // Skip the type
                     while (currentToken < tokensLine.length) {
                         token = tokensLine[currentToken];
-    
+
                         if (token.type === "comma") {
                             currentToken++;
                             continue;
@@ -141,24 +141,24 @@ export function parser(lines: Array<tokenized_line>): ast {
                                 node.definitions.push({
                                     name: variableName,
                                     value: initialValue
-                                } as variable_info);
+                                });
                                 currentToken++;
                                 break;
                             }
                             else if (tokensLine[currentToken+1].type === "assignation") {
                                 const variableName = token.value;
-                                currentToken+=2;
+                                currentToken += 2;
                                 node.definitions.push({
                                     name: variableName,
                                     value: walkToken()
-                                } as variable_info);
-                                // currentToken++; 🫂 🫂 🫂 🫂 
+                                });
+                                // currentToken++; 🫂 🫂 🫂 🫂
                             }
                             else if (tokensLine[currentToken+1].type === "comma") {
                                 node.definitions.push({
                                     name: tokensLine[currentToken].value,
                                     value: initialValue
-                                } as variable_info);
+                                });
                                 currentToken++;
                             }
                             else {
@@ -184,12 +184,12 @@ export function parser(lines: Array<tokenized_line>): ast {
                     const node = {
                         type: "CallExpression",
                         name: token.value,
-                        arguments: Array<ast_object>()
+                        arguments: Array<ASTObject>()
                     };
                     token = tokensLine[currentToken+=2];
 
                     console.log("Looping arguments:", token ,"\n");
-                    
+
                     while (tokensLine[currentToken].value !== ")") {
                         node.arguments.push(walkToken());
                     }
@@ -201,15 +201,15 @@ export function parser(lines: Array<tokenized_line>): ast {
                     return {
                         type: "UserDefinedVariable",
                         name: token.value
-                    } as identifier;
+                    } as Identifier;
                 }
             }
             else if (token.type === "paren" && token.value === "(") {
-                
+
                 console.log("Parsing parenthesis");
-                const node = {
+                const node: ParenExpressionGroup = {
                     type: "ParenExpressionGroup",
-                    arguments: Array<ast_object>()
+                    arguments: Array<ASTObject>()
                 };
                 token = tokensLine[++currentToken];
                 while (tokensLine[currentToken].value !== ")") {
@@ -221,10 +221,15 @@ export function parser(lines: Array<tokenized_line>): ast {
             }
             else if (token.type === "operator") {
                 currentToken++;
-                return {
-                    type: "Operator",
-                    value: token.value
-                } as literal; // TODO: parse operators as function calls
+                // assume binary operator
+                if (token.value === "+") {
+                    return {
+                        type: "BinaryOperator",
+                        left: parsedLine.pop()!,
+                        operator: token.value,
+                        right: walkToken()
+                    } satisfies BinaryOperator;
+                }
             }
             else if (token.type === "comma") {
                 currentToken++;
@@ -233,7 +238,7 @@ export function parser(lines: Array<tokenized_line>): ast {
 
             throw TypeError(`Parser: unknown token type: ${token.type} -> '${token.value}' at line ${currentLine+1}`);
         }
-    
+
         while (currentToken < tokensLine.length) {
             console.log("🫂 Walking to token:", currentToken+1, "of", tokensLine.length, `(line ${currentLine+1})` , "\n");
             const walkedToken = walkToken();
@@ -241,18 +246,18 @@ export function parser(lines: Array<tokenized_line>): ast {
             parsedLine.push(walkedToken);
         }
         console.log("Exiting from line", currentLine+1, "and returning", parsedLine);
-        currentLine++;
+        currentLine++
         return parsedLine;
     }
 
-    const ast = {
+    const ast: AST = {
         type: "Program",
         name: Deno.args[0],
         body: {
             type: "StatementBlock",
-            statements: Array<Array<ast_object>>()
-        } as statement_block
-    } as ast;
+            statements: []
+        }
+    };
 
     while (currentLine < lines.length) {
         console.log("💀 Walking to line:", currentLine+1, "of", lines.length, "\n");
@@ -261,4 +266,3 @@ export function parser(lines: Array<tokenized_line>): ast {
     }
     return ast;
 }
-

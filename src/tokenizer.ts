@@ -1,12 +1,8 @@
-import { token } from "./types.ts";
+import { Token } from "./types.ts";
 import { isKeyword} from "./builtinsHelpers.ts";
 
 function isNumber(token: string) {
     return (token >= '0' && token <= '9');
-}
-
-function isValidVariableName(name: string) {
-    return /^\p{L}|_/gu.test(name);
 }
 
 function isAlpha(token: string) {
@@ -14,7 +10,7 @@ function isAlpha(token: string) {
 }
 
 export function tokenizer(lines: Array<string>) {
-    const tokens = Array<Array<token>>();
+    const tokens = Array<Array<Token>>();
     for (const line of lines) {
         if (line.trim().length > 0) {
             const tokenizedLine = tokenize(line);
@@ -27,8 +23,8 @@ export function tokenizer(lines: Array<string>) {
     return tokens;
 }
 
-function tokenize(line: string): Array<token> {
-    const tokens = Array<token>();
+function tokenize(line: string): Array<Token> {
+    const tokens = Array<Token>();
 
     let currentChar = 0;
     while (currentChar < line.length) {

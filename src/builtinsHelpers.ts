@@ -1,5 +1,5 @@
-import builtins from "./builtins.json" assert { type: "json"};
-import { literal } from "./types.ts";
+import { BUILTINS } from "./builtins.ts";
+import { Literal } from "./types.ts";
 
 export function parseValue(typename: string, value: string): string | number | boolean {
     if (typename === "CADENA") {
@@ -17,13 +17,14 @@ export function parseValue(typename: string, value: string): string | number | b
 }
 
 export function isNativeType(typename: string) {
-    return builtins.nativeTypes.findIndex(type => (
+    return BUILTINS.nativeTypes.findIndex(type => (
         type.identifier === typename
     )) !== -1;
 }
 
 export function isControlStatement(typename: string) {
-    return builtins.isControlStatements.includes(typename);
+    // deno-lint-ignore no-explicit-any
+    return BUILTINS.isControlStatements.includes(typename as any);
 }
 
 export function isKeyword(name: string) {
@@ -33,11 +34,11 @@ export function isKeyword(name: string) {
         || name === "FALSO"
 } // TODO: Support other keywords like RETURN, BREAK, CONTINUE, ...
 
-export function initialValueFromType(typeName: string): literal {
-    return builtins.nativeTypes.find(type => (
+export function initialValueFromType(typeName: string): Literal {
+    return BUILTINS.nativeTypes.find(type => (
         type.identifier === typeName
     ))?.initialValue ?? {
-        type: "Unknown",
-        value: "Unknown"
+        type: "Unkown",
+        value: undefined
     };
 }

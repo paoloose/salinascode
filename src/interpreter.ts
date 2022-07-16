@@ -1,12 +1,12 @@
-import { ast, ast_object, variable_info } from "./types.ts";
+import { AST, ASTObject, VariableInfo } from "./types.ts";
 
 class Frame {
-    statements: ast_object[][];
+    statements: ASTObject[][];
     hash: string;
     stack: any[] = [];
     return_value: any;
 
-    constructor(statements: ast_object[][]) {
+    constructor(statements: ASTObject[][]) {
         this.statements = statements;
         this.hash = "####"
     }
@@ -16,7 +16,7 @@ export class VirtualMachine {
     frames: Frame[] = [];
     mainFrame: Frame;
 
-    constructor(astTree: ast) {
+    constructor(astTree: AST) {
         this.frames = [];
         this.mainFrame = new Frame(astTree.body.statements);
     }
@@ -25,7 +25,7 @@ export class VirtualMachine {
         console.log("\nRunning frame:", frame.hash);
         this.frames.push(frame);
 
-        function evaluate(statement: ast_object) {
+        function evaluate(statement: ASTObject) {
             if (statement.type === "NumberLiteral") return statement.value;
             if (statement.type === "StringLiteral") return statement.value;
             if (statement.type === "BooleanLiteral") return statement.value;
@@ -38,7 +38,7 @@ export class VirtualMachine {
 
             if (statement.type === "VariableDefinitions") {
 
-                statement.definitions.forEach((definition: variable_info) => {
+                statement.definitions.forEach((definition: VariableInfo) => {
                     frame.stack.push({
                         key: definition.name,
                         value: definition.value,

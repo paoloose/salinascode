@@ -17,7 +17,6 @@ async function main() {
     const sourceLines = await readSourceLines(fileName);
 
     // Tokenize source code
-    console.log("\nTokenizing:");
     const linesTokens = tokenizer(sourceLines);
     console.log(linesTokens);
 
